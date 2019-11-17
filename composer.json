@@ -1,0 +1,27 @@
+{
+  "name": "brad/alkaline-s3-backup",
+  "description": "S3 Backup for Alkaline sites",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Brad Treloar",
+      "email": "bradley.treloar@gmail.com"
+    }
+  ],
+  "bin": [
+    "alkaline-s3-backup"
+  ],
+  "require": {
+    "php": ">=7.1",
+    "webmozart/path-util": "^2.3",
+    "webflo/drupal-finder": "^1.2",
+    "aws/aws-sdk-php": "^3.117",
+    "vlucas/phpdotenv": "^3.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alkaline\\": "src/"
+    }
+  }
+}
