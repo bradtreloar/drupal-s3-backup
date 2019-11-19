@@ -49,7 +49,6 @@ class ArchiveBuilder {
 
     $timestamp = date("Y-m-d_H:i:s");
     $archive = "{$this->tmp}/drupal_backup_$timestamp.tar.gz";
-    echo "{$this->tmp}\n";
     exec("cd {$this->tmp} && tar -czf '$archive' 'drupal'");
     return $archive;
   }
