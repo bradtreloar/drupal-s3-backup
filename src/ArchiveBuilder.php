@@ -50,6 +50,7 @@ class ArchiveBuilder {
     $timestamp = date("Y-m-d_H:i:s");
     $archive = "{$this->tmp}/drupal_backup_$timestamp.tar.gz";
     exec("cd {$this->tmp} && tar -czf '$archive' 'drupal'");
+    exec("rm -r {$this->tmp}/drupal");
     return $archive;
   }
 
@@ -66,11 +67,12 @@ class ArchiveBuilder {
     $db = $databases['default']['default'];
 
     // Dump the database to file.
-    $data_tmp_dir = $this->tmp . 'drupal/data';
+    $data_tmp_dir = $this->tmp . "drupal/$site/data";
     if (!is_dir($data_tmp_dir)) {
       mkdir($data_tmp_dir, 0755, TRUE);
     }
-    $command = "mysqldump --user='{$db['username']}' --password='{$db['password']}' '{$db['database']}'";
+    putenv("MYSQL_PWD=${db['password']}");
+    $command = "mysqldump --user='{$db['username']}' '{$db['database']}'";
     exec("$command > '$data_tmp_dir/drupal.sql'");
   }
 
