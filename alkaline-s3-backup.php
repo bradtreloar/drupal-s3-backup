@@ -54,3 +54,6 @@ $result = $s3Client->putObject([
   'Key' => $key,
   'SourceFile' => $archive_filepath,
 ]);
+
+exec("rm $archive_filepath");
+
