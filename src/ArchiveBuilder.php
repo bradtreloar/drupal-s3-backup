@@ -1,6 +1,6 @@
 <?php
 
-namespace Alkaline;
+namespace DrupalS3Backup;
 
 /**
  * Handles backup archive creation.

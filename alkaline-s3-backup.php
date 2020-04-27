@@ -1,6 +1,6 @@
 <?php
 
-use Alkaline\ArchiveBuilder;
+use DrupalS3Backup\ArchiveBuilder;
 use Aws\S3\S3Client;
 use Dotenv\Dotenv;
 use DrupalFinder\DrupalFinder;
@@ -40,7 +40,7 @@ $dotenv->load();
 $archiver = new ArchiveBuilder($drupalRoot, $tmp);
 $archive_filepath = $archiver->buildArchive();
 
-$bucket = getenv("ALKALINE_S3_BACKUP_BUCKET");
+$bucket = getenv("DRUPAL_S3_BACKUP_BUCKET");
 $key = basename($archive_filepath);
 
 $s3Client = new S3Client([
@@ -56,4 +56,3 @@ $result = $s3Client->putObject([
 ]);
 
 exec("rm $archive_filepath");
-
