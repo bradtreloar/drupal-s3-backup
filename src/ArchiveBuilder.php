@@ -8,7 +8,7 @@ namespace DrupalS3Backup;
 class ArchiveBuilder {
 
   /**
-   * The drupal site's root.
+   * The Drupal site's root.
    *
    * @var string
    */
@@ -22,7 +22,7 @@ class ArchiveBuilder {
   protected $sites;
 
   /**
-   * Fetches site information.
+   * Fetches the path to the Drupal root and gets the list of sites.
    */
   public function __construct(string $drupalRoot, string $tmp) {
     $this->tmp = $tmp;
@@ -38,11 +38,19 @@ class ArchiveBuilder {
 
   /**
    * Puts site files and database dump in an archive.
+   * 
+   * @return string
+   *   The path to the archive file.
    */
   public function buildArchive(): string {
     foreach ($this->sites as $site) {
       $this->copySiteFiles($site, [
-        "simpletest/", "files/css/", "files/js/", "files/php/", "files/styles"
+        "_default.settings.php_",
+        "_simpletest/_",
+        "_files/css/_",
+        "_files/js/_",
+        "_files/php/_",
+        "_files/styles_"
       ]);
       $this->dumpDatabase($site);
     }
@@ -55,14 +63,18 @@ class ArchiveBuilder {
   }
 
   /**
-   * Creates database dump.
+   * Dumps database into temporary directory.
+   * 
+   * @param string $site
+   *   The name of the site's folder e.g. default.
    */
-  protected function dumpDatabase($site) {
+  protected function dumpDatabase(string $site) {
     // Get database settings.
     $settings_file = "{$this->drupalRoot}/sites/$site/settings.php";
-    // Fake vars used in settings.php before including it.
-    $app_root = "";
-    $site_path = "";
+    // Initialise some fake vars that are referenced in settings.php
+    // before including that file.
+    $app_root = '';
+    $site_path = '';
     include $settings_file;
     $db = $databases['default']['default'];
 
@@ -77,9 +89,14 @@ class ArchiveBuilder {
   }
 
   /**
-   * Lists site files.
+   * Copies files into temporary directory.
+   * 
+   * @param string $site
+   *   The name of the site's folder e.g. default.
+   * @param array $exclude_patterns
+   *   A list of regexp patterns that match files to be excluded from the backup.
    */
-  protected function copySiteFiles(string $site, array $exclude_patterns) {
+  protected function copySiteFiles(string $site, array $exclude_patterns = []) {
     $dirname = "{$this->drupalRoot}/sites/$site";
     $dir = new \RecursiveDirectoryIterator($dirname);
 
@@ -96,7 +113,7 @@ class ArchiveBuilder {
     $files = [];
     foreach ($iterator as $fileinfo) {
       $pathname = $fileinfo->getPathname();
-      if (!preg_match("/simpletest|files\/css|files\/js|files\/php|files\/styles/", $pathname)) {
+      if ($this->includeFile($pathname, $exclude_patterns)) {
         $files[] = $fileinfo;
       }
     }
@@ -111,6 +128,24 @@ class ArchiveBuilder {
       }
       copy($src, $dest);
     }
+  }
+
+  /**
+   * Tests file path against a list of exclude patterns to determine if the
+   * file should be included in the backup.
+   * 
+   * @param string
+   *   The file's path.
+   * @param array
+   *   The list of exclude patterns.
+   */
+  protected function includeFile(string $pathname, array $exclude_patterns) {
+    foreach ($exclude_patterns as $pattern) {
+      if (preg_match($pattern, $pathname)) {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
 }
