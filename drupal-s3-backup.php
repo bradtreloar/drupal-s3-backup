@@ -6,10 +6,9 @@ use Dotenv\Dotenv;
 use DrupalFinder\DrupalFinder;
 use Webmozart\PathUtil\Path;
 
-
 $cwd = isset($_SERVER['PWD']) && is_dir($_SERVER['PWD'])
-  ? $_SERVER['PWD']
-  : getcwd();
+    ? $_SERVER['PWD']
+    : getcwd();
 
 // Set up autoloader.
 $loader = false;
@@ -27,11 +26,10 @@ $tmp = "$home/tmp/";
 
 $drupalFinder = new DrupalFinder();
 if ($drupalFinder->locateRoot($cwd)) {
-  $drupalRoot = $drupalFinder->getDrupalRoot();
-}
-else {
-  echo "Unable to locate Drupal root.";
-  exit(1);
+    $drupalRoot = $drupalFinder->getDrupalRoot();
+} else {
+    echo "Unable to locate Drupal root.";
+    exit(1);
 }
 
 $dotenv = Dotenv::create("$drupalRoot/..");
@@ -43,16 +41,12 @@ $archive_filepath = $archiver->buildArchive();
 $bucket = getenv("DRUPAL_S3_BACKUP_BUCKET");
 $key = basename($archive_filepath);
 
-$s3Client = new S3Client([
-  'profile' => 'default',
-  'version' => 'latest',
-  'region' => 'ap-southeast-2',
-]);
+$s3Client = new S3Client([]);
 
 $result = $s3Client->putObject([
-  'Bucket' => $bucket,
-  'Key' => $key,
-  'SourceFile' => $archive_filepath,
+    'Bucket' => $bucket,
+    'Key' => $key,
+    'SourceFile' => $archive_filepath,
 ]);
 
 exec("rm $archive_filepath");

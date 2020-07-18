@@ -16,8 +16,10 @@ Install this utility as a composer dependency of your Drupal site.
 composer require bradtreloar/drupal-s3-backup
 ```
 
-Set DRUPAL_S3_BACKUP_BUCKET in your site's `.env` file.
+Set your AWS credentials and bucket name in your site's `.env` file.
 ```
+AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 DRUPAL_S3_BACKUP_BUCKET="example-bucket"
 ```
 
