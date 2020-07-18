@@ -32,7 +32,7 @@ if ($drupalFinder->locateRoot($cwd)) {
     exit(1);
 }
 
-$dotenv = Dotenv::create("$drupalRoot/..");
+$dotenv = Dotenv::createImmutable("$drupalRoot/..");
 $dotenv->load();
 
 $archiver = new ArchiveBuilder($drupalRoot, $tmp);
