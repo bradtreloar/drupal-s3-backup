@@ -41,7 +41,10 @@ $archive_filepath = $archiver->buildArchive();
 $bucket = getenv("DRUPAL_S3_BACKUP_BUCKET");
 $key = basename($archive_filepath);
 
-$s3Client = new S3Client([]);
+$s3Client = new S3Client([
+    'version' => '2006-03-01',
+    'region' => getenv("AWS_DEFAULT_REGION"),
+]);
 
 $result = $s3Client->putObject([
     'Bucket' => $bucket,
